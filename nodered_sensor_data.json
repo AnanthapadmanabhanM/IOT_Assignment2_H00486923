@@ -1,0 +1,162 @@
+[
+    {
+        "id": "d0e9343fd23f76f2",
+        "type": "tab",
+        "label": "Store Sensor Data",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "aac31dc3a5e4986f",
+        "type": "mqtt in",
+        "z": "d0e9343fd23f76f2",
+        "name": "MQTT In (Sensor Data)",
+        "topic": "b31ot-manoj/iot/env/telemetry",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "c2e1ffb376f40fad",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "92e72f96dfd43d85"
+            ]
+        ]
+    },
+    {
+        "id": "92e72f96dfd43d85",
+        "type": "function",
+        "z": "d0e9343fd23f76f2",
+        "name": "Format Data for MongoDB",
+        "func": "msg.payload = {\n    timestamp: new Date().toISOString(),\n    temperature: msg.payload.temperature,\n    humidity: msg.payload.humidity\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 100,
+        "wires": [
+            [
+                "b41b682f0720284f",
+                "c218e99d1f20112a"
+            ]
+        ]
+    },
+    {
+        "id": "c218e99d1f20112a",
+        "type": "debug",
+        "z": "d0e9343fd23f76f2",
+        "name": "Debug Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b41b682f0720284f",
+        "type": "mongodb4",
+        "z": "d0e9343fd23f76f2",
+        "clientNode": "5176cc3ff4cff6aa",
+        "mode": "collection",
+        "collection": "sensor_data",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "Insert into MongoDB",
+        "x": 700,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c2e1ffb376f40fad",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "2bcacdc6c78e4b73a575478294c5953b.s1.eu.hivemq.cloud",
+        "port": "8883",
+        "tls": "7db2e23745d586eb",
+        "clientid": "nodeRedClient",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "5176cc3ff4cff6aa",
+        "type": "mongodb4-client",
+        "name": "",
+        "protocol": "mongodb+srv",
+        "hostname": "cluster0.wau2vik.mongodb.net",
+        "port": "",
+        "dbName": "IOT",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": true,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "mongodb+srv://iamananthan23_db_user:a0KfW0u9ZIjKB4w7@cluster0.wau2vik.mongodb.net/IOT?retryWrites=true&w=majority",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-simple"
+    },
+    {
+        "id": "7db2e23745d586eb",
+        "type": "tls-config",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "75bb418b76823732",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-mongodb4": "3.1.1"
+        }
+    }
+]

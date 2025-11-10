@@ -10,9 +10,6 @@ ID: H00486923
 - Real-time Node-RED dashboard
 - Remote LED control
 - 280 ms average publish latency
-
-## Live Links
-- Video Demo: https://youtu.be/[YOUR_VIDEO_ID]
 - MongoDB: `IOT.sensor_data`
 
 ## Wiring

@@ -1,70 +1,142 @@
-<!-- filename: README.md -->
+B31OT Individual Assignment: Secure IoT Environmental Monitoring and Control System
 
-# ESP-NOW Cooperative Greenhouse Monitoring System
+This repository contains the source code and configuration files for the ESP32-based IoT Environmental Monitor. This project demonstrates a secure, full-stack pipeline (Edge, Network, Application) designed to fulfill the requirements of the B31OT IoT module individual assignment.
 
-A multi-node, energy-efficient IoT system using **ESP32**, **ESP-NOW**, **MQTT over TLS**, and a **Node-RED dashboard** to monitor greenhouse temperature and propagate cooperative alerts.
+🌟 Project Overview and Architecture
 
-## 1. Overview
+The system establishes a secure data pipeline using MQTT over TLS/SSL for communication, Node-RED for orchestration and visualization, and MongoDB Atlas for long-term data persistence.
 
-This project implements a **cooperative thermal alert network** with:
+Key Features:
 
-- **Node 1** – ESP32 WROOM  
-  - DHT11 temperature sensor  
-  - NeoPixel RGB LED  
-  - ESP-NOW peer-to-peer + ESP-NOW → Gateway  
+Secure Communication (MQTTS): Uses TLS/SSL encryption (Port 8883) for all communication with the cloud broker, addressing critical security concerns.
 
-- **Node 2** – ESP32 WROOM  
-  - DHT11 temperature sensor  
-  - NeoPixel RGB LED  
-  - ESP-NOW peer-to-peer + ESP-NOW → Gateway  
+Data Persistence: Logs time-series sensor data directly into a scalable MongoDB Atlas database (IOT.sensor_data).
 
-- **Gateway** – ESP32-C3  
-  - Receives ESP-NOW packets from both nodes  
-  - Forwards data and alerts to **HiveMQ Cloud** via MQTT over TLS  
-  - Bridges local ESP-NOW network with the Internet  
+Bidirectional Control: Remotely controls the NeoPixel LED status via MQTT commands published from the Node-RED dashboard.
 
-- **Dashboard** – Node-RED  
-  - Subscribes to `greenhouse/#` MQTT topics  
-  - Shows real-time node readings and alerts  
+Performance: Achieved an average publish latency of 280 ms over the secure connection.
 
-The system was implemented as part of the **B31OT – IoT Group Assignment: Cooperative Thermal Alert Network (2025/26)**.
+🛠️ Configuration Details
 
----
+1. ESP32 Firmware (esp32_firmware_secure_final.ino)
 
-## 2. Features
+The firmware uses the secure HiveMQ Cloud broker and requires authentication.
 
-- Cooperative **alert propagation** between Node1 and Node2  
-- Local **ESP-NOW** for low-latency, energy-efficient communication  
-- **MQTT over TLS** to HiveMQ Cloud (secure remote monitoring)  
-- **Node-RED dashboard** for visualization and supervision  
-- **Duty cycling + deep sleep** on sensor nodes to reduce energy usage  
-- **Simple redundant alert suppression** (rate-limiting propagation)  
-- Compact JSON payloads for cloud transmission
+Parameter
 
----
+Role
 
-## 3. Hardware
+Value
 
-- 2 × ESP32 WROOM Dev Kit (Node1, Node2)  
-- 1 × ESP32-C3 Dev Kit (Gateway)  
-- 2 × DHT11 temperature sensors  
-- 2 × NeoPixel RGB LEDs (1 pixel each)  
-- USB cables (for power and programming)
+mqtt_server
 
-### Pin Mapping (Nodes)
+Secure Broker URL
 
-- DHT11 data → `GPIO4`  
-- NeoPixel data → `GPIO5`  
+2bcacdc6c78e4b73a575478294c5953b.s1.eu.hivemq.cloud
 
-> Power is provided via USB for demonstration, but the system is designed with battery operation in mind for energy-efficiency analysis.
+mqtt_port
 
----
+Secure TLS Port
 
-## 4. MAC Address Configuration
+8883
 
-These are the MAC addresses used in the code (and were replaced with the real board addresses during testing):
+mqtt_user
 
-```c
-Gateway (ESP32-C3):   24:6F:28:AA:BB:01
-Node1  (ESP32 WROOM): 24:6F:28:AA:BB:02
-Node2  (ESP32 WROOM): 24:6F:28:AA:BB:03
+Authentication Username
+
+Ananthapadmanabhan_Manoj
+
+mqtt_pass
+
+Authentication Password
+
+Padmanabham@23
+
+TELEMETRY_TOPIC
+
+Sensor Data (Publish)
+
+b31ot-manoj/iot/env/telemetry
+
+COMMAND_TOPIC
+
+LED Control (Subscribe)
+
+b31ot-manoj/iot/env/cmd
+
+2. Cloud Persistence (MongoDB Atlas)
+
+The storage flow (mongodb_storage_flow_final.json) is configured to connect to your cluster.
+
+Cluster: cluster0.wau2vik.mongodb.net
+
+Database: IOT
+
+Collection: sensor_data
+
+Required Node-RED Library: node-red-contrib-mongodb4
+
+📁 Repository Contents
+
+File
+
+Description
+
+Assignment Part
+
+esp32_firmware_secure_final.ino
+
+C++ Sketch: Full firmware implementing MQTTS, sensor read, JSON publication, and command callback.
+
+1, 2, 3
+
+node_red_flow.json
+
+Node-RED Flow: Visualization dashboard (Gauges, Charts, Control Buttons).
+
+3
+
+mongodb_storage_flow_final.json
+
+Node-RED Flow: Logic to subscribe to telemetry and persist data into MongoDB Atlas.
+
+4 (Persistence)
+
+data_analysis.py
+
+Python Script: Subscribes to MQTT, logs data to CSV, and generates statistical analysis and plots.
+
+4 (Analytics)
+
+IOT_Assign.2_H00486923-6.pdf
+
+Final IEEE Report: Submitted documentation and critical evaluation.
+
+N/A
+
+🚀 Getting Started (Quick Setup Guide)
+
+Prerequisites:
+
+Arduino IDE with ESP32 Board Support installed.
+
+Arduino Libraries: PubSubClient, DHT, Adafruit_NeoPixel, ArduinoJson, and WiFiClientSecure.
+
+Running Node.js/Node-RED instance.
+
+Steps:
+
+Flash ESP32: Compile and upload esp32_firmware_secure_final.ino after confirming library dependencies are met.
+
+Import Flows: In the Node-RED editor, import both .json flow files.
+
+Configure Node-RED Broker: Double-click the MQTT broker node in both imported flows and ensure the Server (2bcacdc6c78e...), Port (8883), and Security Credentials match the firmware.
+
+Configure MongoDB: Double-click the MongoDB node and paste the correct connection URI for the IOT database.
+
+Deploy & Run: Deploy all flows and navigate to the dashboard UI to verify live data stream and control.
+
+Author: Ananthapadmanabhan Manoj
+Student ID: H00486923
+Module: B31OT
+Submission: [Insert Final Canvas Submission Link Here (Required for the video link)]
